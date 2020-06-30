@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Layout from '../core/Layout';
-import { API } from '../config';
+
+import { signup } from '../auth';
+
 
 const Signup = () => {
   const [values, setValues] = useState({
@@ -11,34 +13,30 @@ const Signup = () => {
     success: false
   });
 
-  const { name, email, password } = values;
+  const { name, email, password, success, error } = values;
 
   const handleChange = name => event => {
-    
     setValues({ ...values, error: false, [name]: event.target.value });
   };
 
-  const signup = user => {
-    console.log(name, email, password)
-    fetch(`${API}/signup`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(user)
-    })
-      .then(response => {
-        return response.json();
-      })
-      .catch(err => {
-        return console.log(err);
-      });
-  };
+  
 
   const clickSubmit = event => {
     event.preventDefault();
-    signup({ name, email, password });
+    signup({ name, email, password }).then(data => {
+      if (data.error) {
+        setValues({ ...values, error: data.error, success: false });
+      } else {
+        setValues({
+          ...values,
+          name: '',
+          email: '',
+          password: '',
+          error: '',
+          success: true
+        });
+      }
+    });
   };
 
   const signUpForm = () => (
@@ -49,6 +47,7 @@ const Signup = () => {
           type='text'
           className='form-control'
           onChange={handleChange('name')}
+          value={name}
         />
       </div>
       <div className='form-group'>
@@ -57,6 +56,7 @@ const Signup = () => {
           type='email'
           className='form-control'
           onChange={handleChange('email')}
+          value={email}
         />
       </div>
       <div className='form-group'>
@@ -65,12 +65,29 @@ const Signup = () => {
           type='password'
           className='form-control'
           onChange={handleChange('password')}
+          value={password}
         />
       </div>
       <button onClick={clickSubmit} className='btn btn-primary'>
         Submit
       </button>
     </form>
+  );
+
+  const showError = () => (
+    <div
+      className='alert alert-danger'
+      style={{ display: error ? '' : 'none' }}>
+      {error}
+    </div>
+  );
+
+  const showSuccess = () => (
+    <div
+      className='alert alert-info'
+      style={{ display: success ? '' : 'none' }}>
+      New account is created. Please signin
+    </div>
   );
 
   return (
@@ -80,6 +97,8 @@ const Signup = () => {
       className='container'
       col-8
       offset-2>
+      {showSuccess()}
+      {showError()}
       {signUpForm()}
       {JSON.stringify(values)}
     </Layout>
