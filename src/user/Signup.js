@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../core/Layout';
+import { API } from '../config';
 
 const Signup = () => {
   const [values, setValues] = useState({
@@ -10,8 +11,34 @@ const Signup = () => {
     success: false
   });
 
+  const { name, email, password } = values;
+
   const handleChange = name => event => {
+    
     setValues({ ...values, error: false, [name]: event.target.value });
+  };
+
+  const signup = user => {
+    console.log(name, email, password)
+    fetch(`${API}/signup`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user)
+    })
+      .then(response => {
+        return response.json();
+      })
+      .catch(err => {
+        return console.log(err);
+      });
+  };
+
+  const clickSubmit = event => {
+    event.preventDefault();
+    signup({ name, email, password });
   };
 
   const signUpForm = () => (
@@ -40,7 +67,9 @@ const Signup = () => {
           onChange={handleChange('password')}
         />
       </div>
-      <button className='btn btn-primary'>Submit</button>
+      <button onClick={clickSubmit} className='btn btn-primary'>
+        Submit
+      </button>
     </form>
   );
 
@@ -49,8 +78,8 @@ const Signup = () => {
       title='Signup'
       description='Signup to Node React E-commerce App'
       className='container'
-      col-md-8
-      offset-md-2>
+      col-8
+      offset-2>
       {signUpForm()}
       {JSON.stringify(values)}
     </Layout>
