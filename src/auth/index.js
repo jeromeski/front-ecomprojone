@@ -16,3 +16,20 @@ export const signup = user => {
       return console.log(err);
     });
 };
+
+export const signin = user => {
+  return fetch(`${API}/signin`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(user)
+  })
+    .then(response => {
+      return response.json();
+    })
+    .catch(err => {
+      return console.log(err);
+    });
+};
