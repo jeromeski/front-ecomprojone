@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import Layout from '../core/Layout';
-import { signin } from '../auth';
+import { signin, authenticate } from '../auth';
 
 const Signin = () => {
   const [values, setValues] = useState({
-    email: '',
-    password: '',
+    email: 'jake@email.com',
+    password: 'password123',
     error: '',
     loading: false,
     redirectToReferrer: false
@@ -20,15 +20,17 @@ const Signin = () => {
 
   const clickSubmit = event => {
     event.preventDefault();
-    setValues({...values, error: false, loading: true})
+    setValues({ ...values, error: false, loading: true });
     signin({ email, password }).then(data => {
       if (data.error) {
         setValues({ ...values, error: data.error, loading: false });
       } else {
-        setValues({
-          ...values,
-          loading: false,
-          redirectToReferrer: true
+        authenticate(data, () => {
+          setValues({
+            ...values,
+            loading: false,
+            redirectToReferrer: true
+          });
         });
       }
     });
@@ -68,25 +70,19 @@ const Signin = () => {
     </div>
   );
 
-  const showLoading = () => (
-    loading && (
-      <div
-      className='alert alert-info'>
-      Loading!
-    </div>
-    )
-  );
+  const showLoading = () =>
+    loading && <div className='alert alert-info'>Loading!</div>;
 
   const redirectUser = () => {
     if (redirectToReferrer) {
-      return <Redirect to='/' />
+      return <Redirect to='/' />;
     }
-  }
+  };
 
   return (
     <Layout
-      title='Signup'
-      description='Signup to Node React E-commerce App'
+      title='Signin'
+      description='Signin to Node React E-commerce App'
       className='container'
       col-8
       offset-2>
