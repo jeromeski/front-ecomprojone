@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
+import { createProduct } from './apiAdmin';
 
 const AddProduct = () => {
   const { user, token } = isAuthenticated();
@@ -36,19 +37,35 @@ const AddProduct = () => {
   } = values;
 
   useEffect(() => {
-    setValues({...values, formData: new FormData()})
-
-  }, [])
+    setValues({ ...values, formData: new FormData() });
+  }, []);
 
   const handleChange = name => event => {
-    const value = name === 'photo' ? event.target.files[0] : event.target.value
-    formData.set(name, value)
-    setValues({...values, [name]: value})
-  }
+    const value = name === 'photo' ? event.target.files[0] : event.target.value;
+    formData.set(name, value);
+    setValues({ ...values, [name]: value });
+  };
 
-  const clickSubmit = (event) => {
-    
-  }
+  const clickSubmit = event => {
+    event.preventDefault();
+    setValues({ ...values, error: '', loading: true });
+    createProduct(user._id, token, formData).then(data => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        setValues({
+          ...values,
+          name: '',
+          description: '',
+          photo: '',
+          price: '',
+          quantity: '',
+          loading: false,
+          createdProduct: data.name
+        });
+      }
+    });
+  };
 
   const newPostForm = () => (
     <form action='' className='mb-3' onSubmit={clickSubmit}>
@@ -93,6 +110,7 @@ const AddProduct = () => {
         <label>Category</label>
         <select className='form-control' onChange={handleChange('category')}>
           <option value='5efd04796877fb0a38888c77'>Python</option>
+          <option value='5ef9867e345809276854e293'>PHP</option>
         </select>
       </div>
 
@@ -110,11 +128,10 @@ const AddProduct = () => {
           type='number'
           className='form-control'
           onChange={handleChange('quantity')}
-          value={name}
+          value={quantity}
         />
       </div>
-
-      <button className="btn btn-outline-primary">Create Product</button>
+      <button className='btn btn-outline-primary'>Create Product</button>
     </form>
   );
 
