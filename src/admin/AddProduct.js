@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
-import { createProduct } from './apiAdmin';
+import { createProduct, getCategories } from './apiAdmin';
 
 const AddProduct = () => {
   const { user, token } = isAuthenticated();
@@ -36,8 +36,20 @@ const AddProduct = () => {
     formData
   } = values;
 
+  // load categories and set form data
+
+  const init = () => {
+    getCategories().then(data => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        setValues({ ...values, categories: data, formData: new FormData() });
+      }
+    });
+  };
+
   useEffect(() => {
-    setValues({ ...values, formData: new FormData() });
+    init();
   }, []);
 
   const handleChange = name => event => {
@@ -109,14 +121,20 @@ const AddProduct = () => {
       <div className='form-group'>
         <label>Category</label>
         <select className='form-control' onChange={handleChange('category')}>
-          <option value='5efd04796877fb0a38888c77'>Python</option>
-          <option value='5ef9867e345809276854e293'>PHP</option>
+          <option>Please Select</option>
+          {categories &&
+            categories.map((c, i) => (
+              <option key={i} value={c._id}>
+                {c.name}
+              </option>
+            ))}
         </select>
       </div>
 
       <div className='form-group'>
         <label>Shipping</label>
         <select className='form-control' onChange={handleChange('shipping')}>
+          <option>Please Select</option>
           <option value='0'>No</option>
           <option value='1'>Yes</option>
         </select>
@@ -135,13 +153,41 @@ const AddProduct = () => {
     </form>
   );
 
+  const showError = () => (
+    <div
+      className='alert alert-danger'
+      style={{ display: error ? '' : 'none' }}>
+      {error}
+    </div>
+  );
+
+  const showLoading = () =>
+    loading && (
+      <div className='alert alert-success'>
+        <h2>Loading...</h2>
+      </div>
+    );
+
+  const showSuccess = () => (
+    <div
+      className='alert alert-info'
+      style={{ display: createdProduct ? '' : 'none' }}>
+      <h2>{`${createdProduct}`} is created!</h2>
+    </div>
+  );
+
   return (
     <Layout
       title='Add a new product'
       description={`G'day ${user.name}, ready to add a new product?`}
       className='container-fluid'>
       <div className='row'>
-        <div className='col-md-8 offset-md-2'>{newPostForm()}</div>
+        <div className='col-md-8 offset-md-2'>
+          {showLoading()}
+          {showSuccess()}
+          {showError()}
+          {newPostForm()}
+        </div>
       </div>
     </Layout>
   );
