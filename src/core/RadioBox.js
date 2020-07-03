@@ -3,7 +3,9 @@ import React, { useState, useEffect, Fragment } from 'react';
 const RadioBox = ({ prices }) => {
   const [value, setValue] = useState(0);
 
-  const handleChange = () => {};
+  const handleChange = () => {
+    //
+  };
 
   return prices.map((p, i) => (
     <div key={i}>

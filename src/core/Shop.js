@@ -45,14 +45,13 @@ const Shop = () => {
           <h4>Filter by categories</h4>
           <ul>
             <Checkbox
-            categories={categories}
+              categories={categories}
               handleFilters={filters => handleFilters(filters, 'category')}
             />
           </ul>
           <h4>Filter by price range</h4>
           <div>
             <RadioBox
-              
               prices={prices}
               handleFilters={filters => handleFilters(filters, 'price')}
             />
