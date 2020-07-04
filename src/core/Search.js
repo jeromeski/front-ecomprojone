@@ -51,12 +51,25 @@ const Search = () => {
     setdata({ ...data, [name]: event.target.value, searched: false });
   };
 
-  
+  const searchMessage = (searched, results) => {
+    if (searched && results.length > 0) {
+      return `Found ${results.length} products`;
+    }
+    if (searched && results.length < 1) {
+      return `No products found`;
+    }
+  };
+
   const searchProducts = (results = []) => (
-    <div className="row">
-    {results.map((product, i) => (<Card key={i} product={product} />))}
+    <div>
+      <h2 className='mt-4 mb-4'>{searchMessage(searched, results)}</h2>
+      <div className='row'>
+        {results.map((product, i) => (
+          <Card key={i} product={product} />
+        ))}
+      </div>
     </div>
-  )
+  );
 
   const searchForm = () => (
     <form onSubmit={searchSubmit}>
@@ -64,7 +77,7 @@ const Search = () => {
         <div className='input-group input-group-lg'>
           <div className='input-group-prepend'>
             <select className='btn mr-2' onChange={handleChange('category')}>
-              <option value='All'>Pick a Category</option>
+              <option value='All'>All</option>
               {categories.map((c, i) => (
                 <option key={i} value={c._id}>
                   {c.name}
