@@ -41,6 +41,7 @@ const Search = () => {
       );
     }
   };
+
   const searchSubmit = e => {
     e.preventDefault();
     searchData();
@@ -49,6 +50,13 @@ const Search = () => {
   const handleChange = name => event => {
     setdata({ ...data, [name]: event.target.value, searched: false });
   };
+
+  
+  const searchProducts = (results = []) => (
+    <div className="row">
+    {results.map((product, i) => (<Card key={i} product={product} />))}
+    </div>
+  )
 
   const searchForm = () => (
     <form onSubmit={searchSubmit}>
@@ -81,7 +89,7 @@ const Search = () => {
   return (
     <div className='row'>
       <div className='container mb-3'>{searchForm()}</div>
-      {JSON.stringify(results)}
+      <div className='container mb-3'>{searchProducts(results)}</div>
     </div>
   );
 };
