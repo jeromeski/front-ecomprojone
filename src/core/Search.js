@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getCategories } from './apiCore';
+import { getCategories, list } from './apiCore';
 import Card from './Card';
 
 const Search = () => {
@@ -27,9 +27,28 @@ const Search = () => {
     loadCategories();
   }, []);
 
-  const searchSubmit = () => {};
+  const searchData = () => {
+    // console.log(search, category)
+    if (search) {
+      list({ search: search || undefined, category: category }).then(
+        response => {
+          if (response.error) {
+            console.log(response.error);
+          } else {
+            setdata({ ...data, results: response, searched: true });
+          }
+        }
+      );
+    }
+  };
+  const searchSubmit = e => {
+    e.preventDefault();
+    searchData();
+  };
 
-  const handleChange = () => {};
+  const handleChange = name => event => {
+    setdata({ ...data, [name]: event.target.value, searched: false });
+  };
 
   const searchForm = () => (
     <form onSubmit={searchSubmit}>
@@ -39,7 +58,9 @@ const Search = () => {
             <select className='btn mr-2' onChange={handleChange('category')}>
               <option value='All'>Pick a Category</option>
               {categories.map((c, i) => (
-                <option key={i} value={c._id}>{c.name}</option>
+                <option key={i} value={c._id}>
+                  {c.name}
+                </option>
               ))}
             </select>
           </div>
@@ -60,6 +81,7 @@ const Search = () => {
   return (
     <div className='row'>
       <div className='container mb-3'>{searchForm()}</div>
+      {JSON.stringify(results)}
     </div>
   );
 };
