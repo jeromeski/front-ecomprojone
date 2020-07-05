@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import ShowImage from './ShowImg';
 import moment from 'moment';
-import { addItem } from './cartHelper';
+import { addItem } from './cartHelpers';
 
 const Card = ({ product, showViewProductButton = true }) => {
   const [redirect, setRedirect] = useState(false)
