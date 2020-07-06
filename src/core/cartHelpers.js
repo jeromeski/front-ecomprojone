@@ -42,16 +42,32 @@ export const getCart = () => {
 };
 
 export const updateItem = (productId, count) => {
-  let cart = []
-  if(typeof window !== 'undefined') {
-    if(localStorage.getItem('cart')) {
-      cart = JSON.parse(localStorage.getItem('cart'))
+  let cart = [];
+  if (typeof window !== 'undefined') {
+    if (localStorage.getItem('cart')) {
+      cart = JSON.parse(localStorage.getItem('cart'));
     }
     cart.map((product, i) => {
-      if(product._id === productId) {
-        cart[i].count = count
+      if (product._id === productId) {
+        cart[i].count = count;
       }
-    })
-    localStorage.setItem('cart', JSON.stringify(cart))
+    });
+    localStorage.setItem('cart', JSON.stringify(cart));
   }
-}
+};
+
+export const removeItem = (productId) => {
+  let cart = [];
+  if (typeof window !== 'undefined') {
+    if (localStorage.getItem('cart')) {
+      cart = JSON.parse(localStorage.getItem('cart'));
+    }
+    cart.map((product, i) => {
+      if (product._id === productId) {
+        cart.splice(i, 1);
+      }
+    });
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+  return cart;
+};
